@@ -63,7 +63,7 @@ class CLSSettings:
         self.request_permission_prompt = text
 
     def get_api_url(self, path):
-        base_url = os.environ.get("CLS_API_URL", "https://app.cls.dev/api/")
+        base_url = os.environ.get("CLS_API_URL", "https://api.cls.dev/")
         return base_url.rstrip("/") + "/" + path.strip("/") + "/"
 
     def get_user_settings_path(self):
