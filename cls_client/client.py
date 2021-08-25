@@ -1,7 +1,7 @@
 import os
 import functools
 
-from .shared import track_event, dispatch_events
+from .shared import track_event
 from .shared import logger
 
 
@@ -61,10 +61,7 @@ def track_function(
 
             slug = name or func.__name__
 
-            track_event(slug=slug, type=type, metadata=event_metadata)
-
-            if dispatch:
-                dispatch_events()
+            track_event(slug=slug, type=type, metadata=event_metadata, dispatch=dispatch)
 
             if raised_exception:
                 raise raised_exception

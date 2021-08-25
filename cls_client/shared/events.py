@@ -13,7 +13,7 @@ this.events_failed = []
 # TODO use a log instead?
 
 
-def track_event(slug, type, metadata={}):
+def track_event(slug, type, metadata={}, dispatch=False):
     data = {
         "slug": slug,
         "type": type,
@@ -27,6 +27,9 @@ def track_event(slug, type, metadata={}):
     this.events_pending.append(data)
 
     logger.debug(f"CLS event added slug={slug} type={type}")
+
+    if dispatch:
+        dispatch_events()
 
 
 def dispatch_events():
