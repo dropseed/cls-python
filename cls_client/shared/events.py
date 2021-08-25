@@ -18,11 +18,13 @@ def track_event(slug, type, metadata={}, dispatch=False):
         "slug": slug,
         "type": type,
         "metadata": metadata,
-        "invocation_id": settings.invocation_id,
+        "invocation_id": settings.get_invocation_id(),
     }
 
     if not settings.should_track(event_data=data):
         return
+
+    data["user_id"] = settings.get_user_id()  # TODO not shown in example (set by should_track)
 
     this.events_pending.append(data)
 

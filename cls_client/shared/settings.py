@@ -25,13 +25,14 @@ class CLSSettings:
         self.project_slug = ""
 
         self.request_permission_prompt = DEFAULT_REQUEST_PROMPT
-        self.invocation_id = str(uuid.uuid4())
         self.is_noninteractive = False
         self.noninteractive_tracking_enabled = False
 
         # Should not be accessed directly (can be overriden by env)
         self._project_key = ""
         self._debug = False
+        self._user_id = ""
+        self._invocation_id = ""
 
     def set_debug(self, value):
         self._debug = value
@@ -51,6 +52,30 @@ class CLSSettings:
             return os.environ["CLS_PROJECT_KEY"]
 
         return self._project_key
+
+    def get_user_id(self):
+        if "CLS_USER_ID" in os.environ:
+            return os.environ["CLS_USER_ID"]
+
+        if self._user_id:
+            return self._user_id
+
+        return self.get_user_settings().get("user_id", str(uuid.uuid4()))
+
+    def set_user_id(self, user_id):
+        self._user_id = user_id
+
+    def get_invocation_id(self):
+        if "CLS_INVOCATION_ID" in os.environ:
+            return os.environ["CLS_INVOCATION_ID"]
+
+        if self._invocation_id:
+            return self._invocation_id
+
+        return str(uuid.uuid4())
+
+    def set_invocation_id(self, invocation_id):
+        self._invocation_id = invocation_id
 
     def set_project_slug(self, slug):
         self.project_slug = slug
@@ -96,10 +121,15 @@ class CLSSettings:
             json.dump(user_settings, f, indent=2)
 
     def should_track(self, event_data={}):
+        user_settings = self.get_user_settings()
+
+        if "user_id" not in user_settings:
+            self.set_user_setting("user_id", self.get_user_id())
+
         if self.is_noninteractive:
             return self.noninteractive_tracking_enabled
 
-        already_enabled = self.get_user_settings().get("tracking_enabled", None)
+        already_enabled = user_settings.get("tracking_enabled", None)
         if already_enabled is not None:
             return already_enabled
 
