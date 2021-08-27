@@ -1,8 +1,7 @@
 import os
 import functools
 
-from .shared import track_event
-from .shared import logger
+from .ffi import track_event
 
 
 def track_function(
@@ -29,9 +28,10 @@ def track_function(
                     try:
                         event_metadata["args"][arg_index] = args[arg_index]
                     except IndexError as e:
-                        logger.error(
-                            f"Could not include arg {arg_index} in event metadata: {e}"
-                        )
+                        pass
+                        # logger.error(
+                        #     f"Could not include arg {arg_index} in event metadata: {e}"
+                        # )
 
             # Include specific kwargs
             if include_kwargs:
@@ -40,15 +40,17 @@ def track_function(
                     try:
                         event_metadata["kwargs"][kwarg_name] = kwargs[kwarg_name]
                     except KeyError as e:
-                        logger.error(
-                            f"Could not include kwarg {kwarg_name} in event metadata: {e}"
-                        )
+                        pass
+                        # logger.error(
+                        #     f"Could not include kwarg {kwarg_name} in event metadata: {e}"
+                        # )
 
             # Inlcude specific environment variables
             if include_env:
                 event_metadata["env"] = {}
                 for env_name in include_env:
-                    event_metadata["env"][env_name] = os.environ.get(env_name)
+                    if env_name in os.environ:
+                        event_metadata["env"][env_name] = os.environ[env_name]
 
             try:
                 return_value = func(*args, **kwargs)
@@ -61,7 +63,9 @@ def track_function(
 
             slug = name or func.__name__
 
-            track_event(slug=slug, type=type, metadata=event_metadata, dispatch=dispatch)
+            track_event(
+                slug=slug, type=type, metadata=event_metadata, dispatch=dispatch
+            )
 
             if raised_exception:
                 raise raised_exception
@@ -74,4 +78,6 @@ def track_function(
 
 
 def track_command(*args, **kwargs):
-    return track_function(type="command", dispatch=True, *args, **kwargs)
+    if "dispatch" not in kwargs:
+        kwargs["dispatch"] = True
+    return track_function(type="command", *args, **kwargs)

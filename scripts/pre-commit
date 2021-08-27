@@ -1,2 +1,3 @@
 #!/bin/sh -e
 black cls_client --check
+./scripts/test
