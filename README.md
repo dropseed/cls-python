@@ -9,10 +9,8 @@ import cls_client
 
 cls_client.set_project_key("cls_pk_xxxxxxxxxxxxx")
 cls_client.set_project_slug("my_cli")
-cls_client.set_noninteractive_tracking(
-    enabled=True,
-    is_noninteractive="CI" in os.environ,
-)
+cls_client.set_noninteractive_tracking_enabled(True)
+
 
 @cli.command()
 @click.option("--check", is_flag=True, default=False)
