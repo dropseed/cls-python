@@ -1,5 +1,7 @@
 import os
+import base64
 import json
+import hashlib
 import platform
 from ctypes import cdll
 
@@ -15,8 +17,17 @@ elif platform.uname()[0] == "Darwin":
 else:
     raise Exception("Unknown platform for CLS")
 
+_ffi_dir = os.path.dirname(__file__)
+_lib = cdll.LoadLibrary(os.path.join(_ffi_dir, "libs", _lib_filename))
 
-_lib = cdll.LoadLibrary(os.path.join(os.path.dirname(__file__), "libs", _lib_filename))
+# Get a path to cls_client, which could be shared between CLIs in the same env,
+# but those should be made unique with the combination of project_slug
+_cls_client_dir = os.path.abspath(os.path.dirname(_ffi_dir))
+_default_instance_id = base64.urlsafe_b64encode(
+    hashlib.md5(_cls_client_dir.encode("utf-8")).digest()
+)  # bytes on purpose
+_default_instance_id = _default_instance_id[:8]
+_lib.set_instance_id(_default_instance_id)
 
 
 def set_debug(debug):
