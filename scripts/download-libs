@@ -1,8 +1,8 @@
-#!/bin/sh -e
+#!/bin/sh -ex
 version="$1"
-rm cls_client/ffi/libs/*
-curl -L https://github.com/dropseed/cls/releases/download/v$version/cls_ffi.dll -o cls_client/ffi/libs/cls_ffi.dll
-curl -L https://github.com/dropseed/cls/releases/download/v$version/libcls_ffi.dylib -o cls_client/ffi/libs/libcls_ffi.dylib
-curl -L https://github.com/dropseed/cls/releases/download/v$version/libcls_ffi_arm64.dylib -o cls_client/ffi/libs/libcls_ffi_arm64.dylib
-curl -L https://github.com/dropseed/cls/releases/download/v$version/libcls_ffi.so -o cls_client/ffi/libs/libcls_ffi.so
+rm -f cls_client/ffi/libs/*
+curl -Lf https://github.com/dropseed/cls/releases/download/v$version/cls_ffi.dll -o cls_client/ffi/libs/cls_ffi.dll
+curl -Lf https://github.com/dropseed/cls/releases/download/v$version/libcls_ffi.dylib -o cls_client/ffi/libs/libcls_ffi.dylib
+curl -Lf https://github.com/dropseed/cls/releases/download/v$version/libcls_ffi_arm64.dylib -o cls_client/ffi/libs/libcls_ffi_arm64.dylib
+curl -Lf https://github.com/dropseed/cls/releases/download/v$version/libcls_ffi.so -o cls_client/ffi/libs/libcls_ffi.so
 ls -alh cls_client/ffi/libs
