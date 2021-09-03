@@ -34,6 +34,10 @@ def set_debug(debug):
     _lib.set_debug(1 if debug else 0)
 
 
+def set_version(version):
+    _lib.set_version(version.encode("utf-8"))
+
+
 def set_project_key(project_key):
     _lib.set_project_key(project_key.encode("utf-8"))
 

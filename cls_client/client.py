@@ -23,6 +23,7 @@ def track_function(
 
             # Include specific args
             if include_args:
+                # TODO should be {}?
                 event_metadata["args"] = []
                 for arg_index in include_args:
                     try:

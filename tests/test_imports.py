@@ -3,6 +3,7 @@ def test_imports():
     from cls_client import (
         track_command,
         set_debug,
+        set_version,
         set_project_key,
         set_project_slug,
         set_noninteractive_tracking_enabled,
