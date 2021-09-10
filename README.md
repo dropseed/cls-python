@@ -6,9 +6,12 @@ In development.
 import click
 import cls_client
 
+from . import __version__
+
 
 cls_client.set_project_key("cls_pk_xxxxxxxxxxxxx")
 cls_client.set_project_slug("my_cli")
+cls_client.set_version(__version__)
 cls_client.set_noninteractive_tracking_enabled(True)
 
 
