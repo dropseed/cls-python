@@ -8,6 +8,8 @@ from ctypes import cdll
 
 if platform.uname()[0] == "Windows":
     _lib_filename = "cls_ffi.dll"
+elif platform.uname()[0] == "Linux" and platform.uname()[4] == "aarch64":
+    _lib_filename = "libcls_ffi_aarch64.so"
 elif platform.uname()[0] == "Linux":
     _lib_filename = "libcls_ffi.so"
 elif platform.uname()[0] == "Darwin" and platform.uname().machine == "arm64":
@@ -46,8 +48,13 @@ def set_project_slug(project_slug):
     _lib.set_project_slug(project_slug.encode("utf-8"))
 
 
+def set_ci_tracking_enabled(enabled):
+    _lib.set_ci_tracking_enabled(1 if enabled else 0)
+
+
+# Deprecated in favor of set_ci_tracking_enabled
 def set_noninteractive_tracking_enabled(enabled):
-    _lib.set_noninteractive_tracking_enabled(1 if enabled else 0)
+    set_ci_tracking_enabled(enabled)
 
 
 def track_event(slug, type, metadata, dispatch):
@@ -75,5 +82,10 @@ def set_invocation_id(invocation_id):
     _lib.set_invocation_id(invocation_id.encode("utf-8"))
 
 
+def set_is_ci(is_ci):
+    _lib.set_is_ci(1 if is_ci else 0)
+
+
+# Deprecated in favor of set_is_ci
 def set_is_noninteractive(is_noninteractive):
-    _lib.set_is_noninteractive(1 if is_noninteractive else 0)
+    set_is_ci(is_noninteractive)
