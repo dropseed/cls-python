@@ -1,5 +1,6 @@
 import os
 import functools
+import traceback
 
 from .ffi import track_event
 
@@ -13,6 +14,7 @@ def track_function(
     include_env=[],
     metadata={},
     dispatch=False,
+    track_exceptions=True,
 ):
     def decorator(func):
         @functools.wraps(func)
@@ -57,10 +59,11 @@ def track_function(
                 return_value = func(*args, **kwargs)
             except Exception as e:
                 raised_exception = e
-                return_value = "Exception"
 
             if include_return_value:
-                event_metadata["return_value"] = return_value
+                event_metadata["return_value"] = (
+                    "Error" if raised_exception else return_value
+                )
 
             slug = name or func.__name__
 
@@ -69,6 +72,21 @@ def track_function(
             )
 
             if raised_exception:
+                if track_exceptions:
+                    event_metadata["stacktrace"] = "".join(
+                        traceback.TracebackException.from_exception(
+                            raised_exception
+                        ).format()
+                    )
+                    track_event(
+                        slug=slug,
+                        type="error",
+                        metadata=event_metadata,
+                        dispatch=True,  # always dispatch errors right away
+                    )
+
+                # original exception will be re-raised, which means you'll see the output again
+                # but it can then be handled through other means if necessary...
                 raise raised_exception
 
             return return_value

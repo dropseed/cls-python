@@ -12,5 +12,14 @@ def func():
     print("func() in example.py")
 
 
+@cls_client.track_command()
+def error_func():
+    1/0
+
+
 if __name__ == "__main__":
     func()
+    try:
+        error_func()
+    except Exception as e:
+        pass
