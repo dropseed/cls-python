@@ -57,13 +57,10 @@ def track_function(
 
             try:
                 return_value = func(*args, **kwargs)
+                if include_return_value:
+                    event_metadata["return_value"] = return_value
             except Exception as e:
                 raised_exception = e
-
-            if include_return_value:
-                event_metadata["return_value"] = (
-                    "Error" if raised_exception else return_value
-                )
 
             slug = name or func.__name__
 
